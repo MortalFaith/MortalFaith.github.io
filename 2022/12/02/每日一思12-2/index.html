@@ -27,7 +27,7 @@
 <meta property="og:description" content="移动所有球到每个盒子所需的最小操作数">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-12-02T07:50:20.000Z">
-<meta property="article:modified_time" content="2022-12-03T15:58:03.513Z">
+<meta property="article:modified_time" content="2022-12-07T14:09:30.286Z">
 <meta property="article:author" content="MortalFaith">
 <meta name="twitter:card" content="summary">
 
@@ -127,7 +127,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -191,7 +191,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-12-03 23:58:03" itemprop="dateModified" datetime="2022-12-03T23:58:03+08:00">2022-12-03</time>
+      <time title="修改时间：2022-12-07 22:09:30" itemprop="dateModified" datetime="2022-12-07T22:09:30+08:00">2022-12-07</time>
     </span>
 
   
@@ -223,7 +223,8 @@
 <p>输入：boxes &#x3D; “001011”<br>输出：[11,8,5,4,3,4]</p>
 <p>n &#x3D;&#x3D; boxes.length<br>1 &lt;&#x3D; n &lt;&#x3D; 2000<br>boxes[i] 为 ‘0’ 或 ‘1’</p>
 <h2 id="初始思路"><a href="#初始思路" class="headerlink" title="初始思路"></a>初始思路</h2><p>对于每个盒子，计算每个有球的地方到这里的步数<br>O（n²）应该不会爆</p>
-<h2 id="修正思路"><a href="#修正思路" class="headerlink" title="修正思路"></a>修正思路</h2><p>参考：<a target="_blank" rel="noopener" href="https://leetcode.cn/problems/minimum-number-of-operations-to-move-all-balls-to-each-box/solutions/2001753/javac-qi-by-tizzi-tkzb/">https://leetcode.cn/problems/minimum-number-of-operations-to-move-all-balls-to-each-box/solutions/2001753/javac-qi-by-tizzi-tkzb/</a><br>“每个有球的地方到这里的步数”之间是有关系的。<br>首先，如果boxes[i]左边有k个球，那他们到boxes[i]的地方就需要k步。右边亦然。<br>由此可以得出一个状态转换：<br>假设把boxes[i]左边的所有k个球（包括boxes[i-1]可能有的一个球）运到boxes[i-1]已经需要n步，那把左边的所有球运到boxes[i]就总共需要k+n步。<br>然后对右边进行相同的操作，最后将左边和右边需要的步数相加即为boxes[i]的答案。<br>接下来只要从左右端开始遍历每个点然后计算k和n就行········<br>？<br>随之而来就有两个问题，循环的始末和计算k和n的先后。<br>先解决后一个：</p>
+<h2 id="修正思路"><a href="#修正思路" class="headerlink" title="修正思路"></a>修正思路</h2><p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/minimum-number-of-operations-to-move-all-balls-to-each-box/solutions/2001753/javac-qi-by-tizzi-tkzb/">https://leetcode.cn/problems/minimum-number-of-operations-to-move-all-balls-to-each-box/solutions/2001753/javac-qi-by-tizzi-tkzb/</a><br>“每个有球的地方到这里的步数”之间是有关系的。<br>首先，如果boxes[i]左边有k个球，那他们到boxes[i]的地方就需要k步。右边亦然。<br>由此可以得出一个状态转换：<br>假设把boxes[i]左边的所有k个球（包括boxes[i-1]可能有的一个球）运到boxes[i-1]已经需要n步，那把左边的所有球运到boxes[i]就总共需要k+n步。<br>然后对右边进行相同的操作，最后将左边和右边需要的步数相加即为boxes[i]的答案。<br>接下来只要从左右端开始遍历每个点然后计算k和n就行········<br>？<br>随之而来就有两个问题，循环的始末和计算k和n的先后。<br>先解决后一个：</p>
 <h3 id="k和n的先后"><a href="#k和n的先后" class="headerlink" title="k和n的先后"></a>k和n的先后</h3><p>先来看看错误示范：<br>（计算右端）</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i=n<span class="number">-1</span>;i&gt;=<span class="number">0</span>;i--)&#123;</span><br><span class="line">  <span class="keyword">if</span> (boxes[i]有球)球数+<span class="number">1</span>;</span><br><span class="line">  boxes[i]的步数+=球数;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>思考一下，boxes[i]有球时boxes[i]的步数会不会因此+1？<br>不会，因为boxes[i]所需的步数和它自己是否有球无关。<br>同时，根据boxes[i]算出来的球数应该和谁的步数有关？<br>是它左边的下家boxes[i-1]。<br>同理，真正和boxes[i]挂钩的球数应该是上一次算出来的球数。<br>所以这题应该先根据上一次算出的球数求出现在的步数，再为下一次计算球数。<br>如果我今天早上烤了个面包，晚上吃了个面包，那我吃的就是今天出炉的面包。<br>如果我今天早上吃面包，晚上烤面包，那我吃的应该就是昨天烤出来的面包。<br>所以遇到计算先后的问题时，应该先考虑清楚：当前计算的量究竟和谁有关。<br>正确的应该是：</p>
